@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1777733233474,
+      "tag": "0000_small_microchip",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1777733485064,
+      "tag": "0001_quiet_stingray",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1777736240206,
+      "tag": "0002_sudden_trauma",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1746230400000,
+      "tag": "0003_twilio_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1777737600000,
+      "tag": "0004_ai_training",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1777784000000,
+      "tag": "0005_sms_batching",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1777870000000,
+      "tag": "0006_calendar_followup_whatsapp",
+      "breakpoints": true
+    }
+  ]
+}
