@@ -10,6 +10,7 @@ import { serveStatic, setupVite } from "./vite";
 import { handleTwilioWebhook } from "./handlers/twilioWebhook";
 import { handleStripeWebhook } from "./handlers/stripeWebhook";
 import { startFollowUpScheduler } from "./followUp";
+import { validateRuntimeEnv } from "./env";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -31,6 +32,8 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  validateRuntimeEnv();
+
   const app = express();
   const server = createServer(app);
 
@@ -56,10 +59,13 @@ async function startServer() {
   // Twilio POSTs application/x-www-form-urlencoded; express.urlencoded() above parses it.
   // The handler validates the Twilio signature using the parsed req.body params.
   app.post("/api/webhook/twilio", (req, res) => {
-    handleTwilioWebhook(req, res).catch((err) => {
+    handleTwilioWebhook(req, res).catch(err => {
       console.error("[Webhook] Unhandled error:", err);
       if (!res.headersSent) {
-        res.set("Content-Type", "text/xml").status(200).send("<Response></Response>");
+        res
+          .set("Content-Type", "text/xml")
+          .status(200)
+          .send("<Response></Response>");
       }
     });
   });
@@ -93,4 +99,7 @@ async function startServer() {
   });
 }
 
-startServer().catch(console.error);
+startServer().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

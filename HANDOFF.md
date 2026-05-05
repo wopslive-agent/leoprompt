@@ -6,11 +6,12 @@ Stack: Express, tRPC, Drizzle ORM, MySQL, React 19, Wouter, TanStack Query, Tail
 
 ## Current Verification
 
-- `pnpm exec tsc --noEmit` passes.
-- `pnpm exec vitest run` passes: 13 test files, 110 tests.
+- `pnpm check` passes.
+- `pnpm test` passes: 14 test files, 117 tests.
 - `pnpm build` passes.
 - Dev server was verified at `http://localhost:3001/` because port 3000 was busy.
-- Build warnings still exist for missing analytics placeholders in `client/index.html`: `VITE_ANALYTICS_ENDPOINT` and `VITE_ANALYTICS_WEBSITE_ID`.
+- Optional analytics is guarded in `client/src/main.tsx`; no missing analytics placeholder warning remains.
+- Build still emits the standard main chunk size warning.
 
 ## Already Built
 
@@ -331,23 +332,20 @@ Primary files:
 
 ### 10. README and TODO Refresh
 
-Status: Stale in a few spots.
+Status: Partially refreshed.
 
 Needed:
 
-- Update README to reflect:
-  - Google Calendar OAuth UI is now built.
-  - SMS batching is not currently wired despite README text.
-  - tests are now 110, not 78.
+- README now reflects the current test count and avoids claiming active SMS batching.
+- Review whether the Google Calendar OAuth UI deserves more README detail.
 - Update TODO list so the next AI does not chase completed tasks.
 
 ### 11. Production Build Warnings
 
-Status: Build passes with warnings.
+Status: Build passes with one warning.
 
 Needed:
 
-- Define `VITE_ANALYTICS_ENDPOINT` and `VITE_ANALYTICS_WEBSITE_ID`, or remove/guard the analytics script in `client/index.html`.
 - Consider route-level code splitting. Current main JS chunk is above 500 kB after minification.
 
 ## Key File Map

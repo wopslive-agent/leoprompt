@@ -28,7 +28,6 @@ DATABASE_URL=mysql://user:password@host:3306/leoprompt
 JWT_SECRET=replace-with-a-long-random-secret
 APP_BASE_URL=https://yourapp.com
 WEBHOOK_BASE_URL=https://yourapp.com
-SMS_BATCH_WINDOW_MS=5000
 TWILIO_ACCOUNT_SID=AC...
 TWILIO_AUTH_TOKEN=...
 ANTHROPIC_API_KEY=...
@@ -94,9 +93,7 @@ POST /api/webhook/stripe
 
 ### Twilio
 
-Twilio sends `application/x-www-form-urlencoded` fields including `From`, `To`, `Body`, and `MessageSid`. The server validates `X-Twilio-Signature`, routes the message by the operator account's configured Twilio number, checks billing usage before creating a new conversation, runs the AI intake flow, persists messages, and sends the SMS reply through Twilio REST.
-
-Inbound SMS messages are held briefly in `smsMessageBatches` before the AI runs. This mirrors the tutorial flow: rapid-fire texts from the same phone number are collected for `SMS_BATCH_WINDOW_MS`, combined into one prompt, deleted from the active queue by marking them processed, and answered with a single SMS-sized reply.
+Twilio sends `application/x-www-form-urlencoded` fields including `From`, `To`, `Body`, and `MessageSid`. The server validates `X-Twilio-Signature`, routes the message by the operator account's configured Twilio or WhatsApp number, checks billing usage before creating a new conversation, runs the AI intake flow, persists messages, and sends the reply through Twilio REST.
 
 ### Stripe
 
@@ -108,11 +105,11 @@ Stripe sends `application/json` with a `Stripe-Signature` header. The server use
 
 ## Billing Plans
 
-| Plan | Price | Monthly new SMS conversations |
-| ---- | ----- | ----------------------------- |
-| Starter | $49/mo | 100 |
-| Pro | $99/mo | 500 |
-| Agency | $249/mo | 2,500 |
+| Plan    | Price   | Monthly new SMS conversations |
+| ------- | ------- | ----------------------------- |
+| Starter | $49/mo  | 100                           |
+| Pro     | $99/mo  | 500                           |
+| Agency  | $249/mo | 2,500                         |
 
 Local demo mode activates plan changes immediately when Stripe keys or price IDs are not configured. Production mode uses Stripe Checkout for new subscriptions and Stripe subscription updates for plan changes.
 
