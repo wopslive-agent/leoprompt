@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { handleTwilioWebhook } from "./handlers/twilioWebhook";
+import { handleSimpleTwilioWebhook } from "./handlers/simpleTwilioWebhook";
 import { handleStripeWebhook } from "./handlers/stripeWebhook";
 import { startFollowUpScheduler } from "./followUp";
 import { validateRuntimeEnv } from "./env";
@@ -66,6 +67,18 @@ async function startServer() {
           .set("Content-Type", "text/xml")
           .status(200)
           .send("<Response></Response>");
+      }
+    });
+  });
+
+  app.post("/api/webhook/simple-twilio", (req, res) => {
+    handleSimpleTwilioWebhook(req, res).catch(err => {
+      console.error("[SimpleWebhook] Unhandled error:", err);
+      if (!res.headersSent) {
+        res
+          .set("Content-Type", "text/xml")
+          .status(200)
+          .send("<Response><Message>Thanks for reaching out. I'm confirming this with my booking manager.</Message></Response>");
       }
     });
   });
