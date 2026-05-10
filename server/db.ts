@@ -427,6 +427,34 @@ export async function getAccountByTwilioPhone(
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function getDefaultAccount(): Promise<Account | null> {
+  const db = await getDb();
+  if (!db) {
+    const matches = memory.accounts.filter(
+      account => account.twilioPhoneNumber !== null && account.twilioPhoneNumber !== undefined
+    );
+    if (matches.length === 0) return null;
+    if (matches.length > 1) {
+      console.warn(
+        `[db] getDefaultAccount: ${matches.length} accounts with twilioPhoneNumber set; using first (id=${matches[0].id})`
+      );
+    }
+    return matches[0];
+  }
+  const result = await db
+    .select()
+    .from(accounts)
+    .where(sql`${accounts.twilioPhoneNumber} IS NOT NULL`)
+    .limit(2);
+  if (result.length === 0) return null;
+  if (result.length > 1) {
+    console.warn(
+      `[db] getDefaultAccount: multiple accounts with twilioPhoneNumber set; using first (id=${result[0].id})`
+    );
+  }
+  return result[0];
+}
+
 export async function getAccountByStripeCustomerId(
   stripeCustomerId: string
 ): Promise<Account | undefined> {

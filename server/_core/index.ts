@@ -9,6 +9,8 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { handleTwilioWebhook } from "./handlers/twilioWebhook";
 import { handleSimpleTwilioWebhook } from "./handlers/simpleTwilioWebhook";
+import { handleTextLinkSmsWebhook } from "./handlers/textlinksmsWebhook";
+import { verifyWebhookSecret as verifyTextLinkSmsSecret } from "./textlinksms";
 import { handleStripeWebhook } from "./handlers/stripeWebhook";
 import { startFollowUpScheduler } from "./followUp";
 import { validateRuntimeEnv } from "./env";
@@ -70,6 +72,32 @@ async function startServer() {
       }
     });
   });
+
+  app.post("/api/webhook/textlinksms", (req, res) => {
+    handleTextLinkSmsWebhook(req, res).catch(err => {
+      console.error("[TextLinkSMS] Unhandled error:", err);
+      if (!res.headersSent) {
+        res.status(200).json({ ok: true });
+      }
+    });
+  });
+
+  for (const subPath of ["sent", "failed", "tag"] as const) {
+    app.post(`/api/webhook/textlinksms/${subPath}`, (req, res) => {
+      const provided =
+        typeof req.body?.secret === "string" ? req.body.secret : "";
+      if (!verifyTextLinkSmsSecret(provided)) {
+        res.status(403).json({ ok: false, error: "forbidden" });
+        return;
+      }
+      if (subPath === "failed") {
+        console.error("[TextLinkSMS] FAILED:", req.body);
+      } else {
+        console.log(`[TextLinkSMS] ${subPath}:`, req.body);
+      }
+      res.status(200).json({ ok: true });
+    });
+  }
 
   app.post("/api/webhook/simple-twilio", (req, res) => {
     handleSimpleTwilioWebhook(req, res).catch(err => {

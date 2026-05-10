@@ -31,6 +31,13 @@ export const ENV = {
     | "ollama",
   ollamaBaseUrl: process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434",
   ollamaModel: process.env.OLLAMA_MODEL ?? "llama3.1:8b",
+  textlinksmsApiKey: process.env.TEXTLINKSMS_API_KEY ?? "",
+  textlinksmsApiBase:
+    process.env.TEXTLINKSMS_API_BASE ?? "https://textlinksms.com",
+  textlinksmsWebhookSecret: process.env.TEXTLINKSMS_WEBHOOK_SECRET ?? "",
+  textlinksmsSimCardId: process.env.TEXTLINKSMS_SIM_CARD_ID
+    ? Number(process.env.TEXTLINKSMS_SIM_CARD_ID)
+    : undefined,
 };
 
 export function validateRuntimeEnv() {
